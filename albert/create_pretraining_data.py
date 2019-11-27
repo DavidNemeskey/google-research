@@ -22,6 +22,7 @@ from __future__ import division
 from __future__ import print_function
 
 import collections
+import gzip
 import random
 
 import numpy as np
@@ -130,7 +131,7 @@ def write_instance_to_example_files(instances, tokenizer, max_seq_length,
   """Create TF example files from `TrainingInstance`s."""
   writers = []
   for output_file in output_files:
-    writers.append(tf.python_io.TFRecordWriter(output_file))
+    writers.append(tf.python_io.TFRecordWriter(output_file, 'ZLIB'))
 
   writer_index = 0
 
@@ -229,7 +230,8 @@ def create_training_instances(input_files, tokenizer, max_seq_length,
   # (2) Blank lines between documents. Document boundaries are needed so
   # that the "next sentence prediction" task doesn't span between documents.
   for input_file in input_files:
-    with tf.gfile.GFile(input_file, "r") as reader:
+    with (gzip.open if input_file.endswith('.gz') else open)(input_file, 'r') as reader:
+    # with tf.gfile.GFile(input_file, "r") as reader:
       while True:
         line = reader.readline()
         if not FLAGS.spm_model_file:
