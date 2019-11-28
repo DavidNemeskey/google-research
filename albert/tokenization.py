@@ -85,6 +85,8 @@ def validate_case_matches_checkpoint(do_lower_case, init_checkpoint):
 
 def preprocess_text(inputs, remove_space=True, lower=False):
   """preprocess data by removing extra space and normalize data."""
+  # TODO: OK, I just skip this step
+  return inputs
   outputs = inputs
   if remove_space:
     outputs = " ".join(inputs.strip().split())
@@ -97,6 +99,7 @@ def preprocess_text(inputs, remove_space=True, lower=False):
 
   outputs = unicodedata.normalize("NFKD", outputs)
   outputs = "".join([c for c in outputs if not unicodedata.combining(c)])
+  tf.logging.info(f'Outputs: {outputs}')
   if lower:
     outputs = outputs.lower()
 
@@ -262,7 +265,7 @@ class FullTokenizer(object):
 
   def convert_tokens_to_ids(self, tokens):
     if self.sp_model:
-      tf.logging.info("using sentence piece tokenzier.")
+      tf.logging.debug("using sentence piece tokenzier.")
       return [self.sp_model.PieceToId(
           printable_text(token)) for token in tokens]
     else:
@@ -270,7 +273,7 @@ class FullTokenizer(object):
 
   def convert_ids_to_tokens(self, ids):
     if self.sp_model:
-      tf.logging.info("using sentence piece tokenzier.")
+      tf.logging.debug("using sentence piece tokenzier.")
       return [self.sp_model.IdToPiece(id_) for id_ in ids]
     else:
       return convert_by_vocab(self.inv_vocab, ids)

@@ -31,7 +31,7 @@ from six.moves import range
 from six.moves import zip
 import tensorflow as tf
 
-from albert import tokenization
+import tokenization
 
 flags = tf.flags
 
@@ -230,7 +230,7 @@ def create_training_instances(input_files, tokenizer, max_seq_length,
   # (2) Blank lines between documents. Document boundaries are needed so
   # that the "next sentence prediction" task doesn't span between documents.
   for input_file in input_files:
-    with (gzip.open if input_file.endswith('.gz') else open)(input_file, 'r') as reader:
+    with (gzip.open if input_file.endswith('.gz') else open)(input_file, 'rt') as reader:
     # with tf.gfile.GFile(input_file, "r") as reader:
       while True:
         line = reader.readline()
@@ -622,6 +622,7 @@ def truncate_seq_pair(tokens_a, tokens_b, max_num_tokens, rng):
 
 def main(_):
   tf.logging.set_verbosity(tf.logging.INFO)
+  tf.logging.info(f'Flags: {FLAGS.flag_values_dict()}')
 
   tokenizer = tokenization.FullTokenizer(
       vocab_file=FLAGS.vocab_file, do_lower_case=FLAGS.do_lower_case,
