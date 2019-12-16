@@ -131,6 +131,7 @@ def write_instance_to_example_files(instances, tokenizer, max_seq_length,
   """Create TF example files from `TrainingInstance`s."""
   writers = []
   for output_file in output_files:
+    # writers.append(tf.python_io.TFRecordWriter(output_file))
     writers.append(tf.python_io.TFRecordWriter(output_file, 'ZLIB'))
 
   writer_index = 0
@@ -637,6 +638,7 @@ def main(_):
     tf.logging.info("  %s", input_file)
 
   rng = random.Random(FLAGS.random_seed)
+  np.random.seed(FLAGS.random_seed)
   instances = create_training_instances(
       input_files, tokenizer, FLAGS.max_seq_length, FLAGS.dupe_factor,
       FLAGS.short_seq_prob, FLAGS.masked_lm_prob, FLAGS.max_predictions_per_seq,
